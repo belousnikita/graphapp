@@ -1,3 +1,6 @@
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/no-access-state-in-setstate */
+/* eslint-disable react/prop-types */
 import React from 'react';
 import Table from './Table';
 // eslint-disable-next-line react/prefer-stateless-function
@@ -7,12 +10,14 @@ export default class Hello extends React.Component {
   static defaultProps = {
     resolution: 3,
   };
+
   constructor(props) {
     super(props);
     const { resolution } = this.props;
     this.state = { resolution };
   }
-  onButtonClick = e => {
+
+  onButtonClick = (e) => {
     e.preventDefault();
     const does = e.target.getAttribute('does');
     const { resolution } = this.state;
@@ -36,17 +41,18 @@ export default class Hello extends React.Component {
         break;
     }
   };
+
   render() {
     const { resolution } = this.state;
     console.log(resolution);
     return (
       <div className="container-fluid">
-        <div class="py-4">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-12">
-                <h1 class="">Heading 1</h1>
-                <p class="lead">
+        <div className="py-4">
+          <div className="container">
+            <div className="row">
+              <div className="col-md-12">
+                <h1 className="">Heading 1</h1>
+                <p className="lead">
                   Lead paragraph. A wonderful serenity has taken possession of
                   my entire soul.
                 </p>
@@ -54,41 +60,43 @@ export default class Hello extends React.Component {
             </div>
           </div>
         </div>
-        <div class="py-5">
-          <div class="container">
-            <div class="row">
+        <div className="py-5">
+          <div className="container">
+            <div className="row">
               <div
-                class="col-md-4 my-0 mb-2"
+                className="col-md-4 my-0 mb-2"
                 style={{ transition: 'all 0.25s' }}
               >
                 <div
-                  class="btn-group m-0 shadow"
+                  className="btn-group m-0 shadow"
                   style={{ transform: 'translateX(180px)' }}
                 >
                   {' '}
                   <a
                     href="#add"
-                    class="btn btn-primary btn-lg text-center"
+                    className="btn btn-primary btn-lg text-center"
                     id="btn-add"
                     style={{ width: '45px', height: '45px' }}
                   >
                     +
-                  </a>{' '}
+                  </a>
                   <a
                     href="#dec"
-                    class="btn btn-primary btn-lg text-center shadow-none"
+                    className="btn btn-primary btn-lg text-center shadow-none"
                     id="btn-dec"
                     style={{ width: '45px', height: '45px' }}
-                    contenteditable="true"
+                    contentEditable="true"
                   >
                     <b>-</b>
-                  </a>{' '}
+                  </a>
                 </div>
               </div>
               <div
-                class="col-md-6 my-1  offset-md-2"
+                className="col-md-6 my-1  offset-md-2"
                 style={{ transition: 'all 0.25s' }}
-              />
+              >
+                <Table />
+              </div>
             </div>
           </div>
         </div>
