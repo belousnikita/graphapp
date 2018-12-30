@@ -1,15 +1,40 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/no-access-state-in-setstate */
 /* eslint-disable react/prop-types */
 import React from 'react';
 import Table from './Table';
+import GraphMatrix from './GraphMatrix';
+import './Hello.css';
 // eslint-disable-next-line react/prefer-stateless-function
 const MAX_FIELD = 6;
 const MIN_FIELD = 2;
+const Buttons = props => (
+  <div className="btn-group text-center pl-5 ml-5">
+    <a
+      href="#add"
+      className="btn btn-primary"
+      does="add"
+      onClick={props.onClick}
+    >
+      Add node
+    </a>
+    <a
+      href="#dec"
+      className="btn btn-primary"
+      does="dec"
+      onClick={props.onClick}
+    >
+      Remove node
+    </a>
+  </div>
+);
 export default class Hello extends React.Component {
   static defaultProps = {
     resolution: 3,
   };
+
+  static Buttons = Buttons;
 
   constructor(props) {
     super(props);
@@ -42,9 +67,15 @@ export default class Hello extends React.Component {
     }
   };
 
-  render() {
+  createMatrix = () => {
     const { resolution } = this.state;
-    console.log(resolution);
+    const matrix = new GraphMatrix(resolution);
+    return matrix.getMatrix();
+  };
+
+  render() {
+    const matrix = this.createMatrix();
+    console.log(this.state);
     return (
       <div className="container-fluid">
         <div className="py-4">
@@ -60,42 +91,17 @@ export default class Hello extends React.Component {
             </div>
           </div>
         </div>
-        <div className="py-5">
+        <div className="py-1">
           <div className="container">
             <div className="row">
-              <div
-                className="col-md-4 my-0 mb-2"
-                style={{ transition: 'all 0.25s' }}
-              >
-                <div
-                  className="btn-group m-0 shadow"
-                  style={{ transform: 'translateX(180px)' }}
-                >
-                  {' '}
-                  <a
-                    href="#add"
-                    className="btn btn-primary btn-lg text-center"
-                    id="btn-add"
-                    style={{ width: '45px', height: '45px' }}
-                  >
-                    +
-                  </a>
-                  <a
-                    href="#dec"
-                    className="btn btn-primary btn-lg text-center shadow-none"
-                    id="btn-dec"
-                    style={{ width: '45px', height: '45px' }}
-                    contentEditable="true"
-                  >
-                    <b>-</b>
-                  </a>
-                </div>
+              <div className="col-md-5" style={{ transition: 'all 2.25s' }}>
+                <Buttons onClick={this.onButtonClick} />
               </div>
               <div
-                className="col-md-6 my-1  offset-md-2"
-                style={{ transition: 'all 0.25s' }}
+                className="col-md-6 my-1  offset-md-1"
+                style={{ transition: 'all 2.25s' }}
               >
-                <Table />
+                <Table matrix={matrix} />
               </div>
             </div>
           </div>
