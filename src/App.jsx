@@ -5,17 +5,28 @@
 import React from 'react';
 import Table from './Table';
 import GraphMatrix from './GraphMatrix';
+import GraphCanvas from './drawing/GraphCanvas';
 import './style/App.css';
 
 // eslint-disable-next-line react/prefer-stateless-function
-const MAX_FIELD = 8;
-const MIN_FIELD = 2;
+const MAX_FIELD = 9;
+const MIN_FIELD = 1;
 const Buttons = props => (
   <div className="btn-group text-center">
-    <button type="button" className="btn btn-primary shadow-sm" does="add" onClick={props.onClick}>
+    <button
+      type="button"
+      className="btn btn-primary shadow-sm"
+      does="add"
+      onClick={props.onClick}
+    >
       + Node
     </button>
-    <button type="button" className="btn btn-primary shadow-sm" does="dec" onClick={props.onClick}>
+    <button
+      type="button"
+      className="btn btn-primary shadow-sm"
+      does="dec"
+      onClick={props.onClick}
+    >
       - Node
     </button>
   </div>
@@ -23,17 +34,17 @@ const Buttons = props => (
 export default class App extends React.Component {
   static defaultProps = {
     resolution: 3,
-    matrix: new GraphMatrix(3),
+    table: new GraphMatrix(3)
   };
 
   static Buttons = Buttons;
 
   constructor(props) {
     super(props);
-    const { resolution, matrix } = this.props;
+    const { resolution, table } = this.props;
     this.state = {
       resolution,
-      matrix,
+      table
     };
   }
 
@@ -50,7 +61,7 @@ export default class App extends React.Component {
         const newResolution = resolution + 1;
         this.setState({
           resolution: newResolution,
-          matrix: new GraphMatrix(newResolution),
+          table: new GraphMatrix(newResolution)
         });
         break;
       }
@@ -61,7 +72,7 @@ export default class App extends React.Component {
         const newResolution = resolution - 1;
         this.setState({
           resolution: newResolution,
-          matrix: new GraphMatrix(newResolution),
+          table: new GraphMatrix(newResolution)
         });
         break;
       }
@@ -70,22 +81,32 @@ export default class App extends React.Component {
     }
   };
 
-  render() {
-    const { matrix } = this.state;
+  onClick = (i, j) => e => {
+    // TODO: Fix hover rehover issue
+    const { table } = this.state;
+    const cell = table.getCell(i, j);
+    cell.trigger();
+    this.setState({
+      table
+    });
+  };
 
+  render() {
+    const { table } = this.state;
     return (
-      <div className="container-fluid">
-        <div className="container-fluid">
+      <div className="container-main">
+        <div className="container-header">
           <div className="row justify-content-center">
             <div className="col">
               <h1 className="">Graph App</h1>
               <p className="lead">
-                This is a simple app for drawing graph from markov chain matrix. Made on React.
+                This is a simple app for drawing graph from markov chain matrix.
+                Made on React.
               </p>
             </div>
           </div>
         </div>
-        <div className="container-fluid" align="center">
+        <div className="container-fluid container-content" align="center">
           <div className="row">
             <div className="col" align="center">
               <Buttons onClick={this.onButtonClick} />
@@ -93,9 +114,13 @@ export default class App extends React.Component {
           </div>
           <br />
           <div className="row">
-            <div className="col-sm-4" align="center">
-              <Table matrix={matrix} />
+            <div className="col" align="center">
+              <Table table={table} onClick={this.onClick} />
             </div>
+          </div>
+          <br />
+          <div className="row">
+            <GraphCanvas nodes={table.getNodes()} />
           </div>
         </div>
       </div>

@@ -3,20 +3,32 @@
 import React from 'react';
 import { uniqueId } from 'lodash';
 import classNames from 'classnames';
-import './Table.css';
+import './style/Table.css';
 
 const Head = ({ children }) => (
-  <td className="p-1" align="center" valign="center" width="45px" height="45px">
+  <td
+    className="p-1"
+    align="center"
+    valign="center"
+    width="2.8125rem"
+    height="2.8125rem"
+  >
     {children}
   </td>
 );
 
 const ButtonCell = props => {
-  const { className, onClick, i, j } = props;
+  const { className, onClick } = props;
   const name = className.split(' ').join('-'); // TODO Fix classnames
   return (
-    <td className="p-1" width="45px" height="45px" align="center" valign="center">
-      {<button className={name} type="button" onClick={onClick(i, j)} />}
+    <td
+      className="p-1"
+      width="2.8125rem"
+      height="2.8125rem"
+      align="center"
+      valign="center"
+    >
+      {<button className={name} type="button" onClick={onClick} />}
     </td>
   );
 };
@@ -27,30 +39,32 @@ export default class Table extends React.Component {
 
   constructor(props) {
     super(props);
-    const { matrix } = this.props;
+    const { table } = this.props;
     this.state = {
-      matrix,
+      table
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      matrix: nextProps.matrix,
+      table: nextProps.table
     });
   }
 
-  onClick = (i, j) => e => {
-    const { matrix } = this.state;
-    const cell = matrix.getCell(i, j);
+  onClick = (i, j) => () => {
+    // TODO: Fix hover rehover issue
+    const { table } = this.state;
+    const cell = table.getCell(i, j);
     cell.trigger();
     this.setState({
-      matrix,
+      table
     });
   };
 
   renderCloumns = () => {
-    const { matrix } = this.state;
-    return matrix.getMatrix().map((row, i) => (
+    const { table } = this.state;
+    const { onClick } = this.props;
+    return table.getTable().map((row, i) => (
       <tr key={uniqueId()}>
         {row.map((cell, j) => {
           if (cell.isHeader()) {
@@ -59,10 +73,14 @@ export default class Table extends React.Component {
           const className = classNames({
             btn: true,
             cell: true,
-            active: cell.getState(),
+            active: cell.getState()
           });
           return (
-            <ButtonCell key={uniqueId()} i={i} j={j} className={className} onClick={this.onClick} />
+            <ButtonCell
+              key={uniqueId()}
+              className={className}
+              onClick={onClick(i, j)}
+            />
           );
         })}
       </tr>
@@ -71,11 +89,9 @@ export default class Table extends React.Component {
 
   render() {
     return (
-      <div className="table-borderless">
-        <table className="table-borderless" width="60px" height="60px">
-          <tbody align="center" valign="center">
-            {this.renderCloumns()}
-          </tbody>
+      <div className="container-fluid" align="center">
+        <table className="table-borderless" align="center">
+          <tbody>{this.renderCloumns()}</tbody>
         </table>
       </div>
     );

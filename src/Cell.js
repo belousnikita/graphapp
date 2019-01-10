@@ -1,7 +1,9 @@
 export default class Cell {
-  constructor(state, header = false) {
+  constructor(state, header, i = null, j = null) {
     this.state = state;
-    this.type = header;
+    this.header = header;
+    this.i = i;
+    this.j = j;
   }
 
   trigger() {
@@ -13,6 +15,6 @@ export default class Cell {
   }
 
   isHeader() {
-    return this.type;
+    return this.header;
   }
 }
