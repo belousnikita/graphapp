@@ -1,4 +1,5 @@
 import React from 'react';
+import findKey from 'lodash/findKey';
 import Canvas from './Canvas';
 import { createCircles, arrangeLine, resize } from './controllers/circles';
 import { interact, getDistance } from './controllers/interaction';
@@ -29,6 +30,24 @@ export default class GraphCanvas extends React.Component {
         this.setState({ dragged: false });
       })
     );
+    window.addEventListener('touchstart', e => {
+      const evt = e.touches[0];
+      if (evt) interact(this.ctx, evt, this.clickTrigger);
+    });
+    window.addEventListener('touchmove', e => {
+      const evt = e.touches[0];
+      if (evt) interact(this.ctx, evt, this.moveEvent);
+    });
+    window.addEventListener('touchend', e => {
+      const evt = e.touches;
+      console.log(`end${JSON.stringify(e.touches)}`);
+      if (evt)
+        interact(this.ctx, evt, () => {
+          const { dragged } = this.state;
+          if (dragged) dragged.setColor('#12bbad');
+          this.setState({ dragged: false });
+        });
+    });
     const { nodes } = this.props;
     const circles = createCircles(this.ctx, nodes);
     this.scaleCircles(circles);
@@ -78,8 +97,9 @@ export default class GraphCanvas extends React.Component {
   }
 
   scaleCircles(circles) {
-    const resizedCircles = resize(this.ctx, circles);
-    this.setState(arrangeLine(this.ctx, resizedCircles));
+    resize(this.ctx, circles);
+    const newCircles = arrangeLine(this.ctx, circles);
+    this.setState({ circles: newCircles });
   }
 
   draw(ctx) {
@@ -87,7 +107,9 @@ export default class GraphCanvas extends React.Component {
     ctx.save();
     ctx.beginPath();
     ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-    circles.forEach(circle => {
+    const idS = Object.keys(circles);
+    idS.forEach(id => {
+      const circle = circles[id];
       ctx.beginPath();
       circle.draw(ctx);
     });
@@ -96,6 +118,7 @@ export default class GraphCanvas extends React.Component {
 
   moveEvent(pos) {
     const { circles, dragged } = this.state;
+    // consolconsole.log(`circles ${circles} dragged ${JSON.stringify(dragged)}`);
     const { width, height } = this.ctx.canvas;
     if (dragged) {
       if (pos.x + dragged.radius > width) {
@@ -105,18 +128,23 @@ export default class GraphCanvas extends React.Component {
       } else {
         dragged.setX(pos.x);
       }
-
-      if (pos.y + dragged.radius < height && pos.y - dragged.radius > 0) {
+      if (pos.y + dragged.radius > height) {
+        dragged.setY(height - dragged.radius);
+      } else if (pos.y - dragged.radius < 0) {
+        dragged.setY(0 + dragged.radius);
+      } else {
         dragged.setY(pos.y);
       }
       dragged.setColor('#0D8C82');
-      circles[dragged.id - 1] = dragged; // TODO Make an object parameter
+      circles[dragged.id] = dragged;
       this.setState({ circles });
       return;
     }
-    circles.forEach(circle => {
+    const idS = Object.keys(circles);
+    idS.forEach(id => {
+      const circle = circles[id];
       const distance = getDistance(pos, circle);
-      const scaledSize = circle.getScaledSize(this.ctx, circles.length);
+      const scaledSize = circle.getScaledSize(this.ctx, idS.length);
       if (distance <= circle.radius) {
         circle.setSize(scaledSize + (scaledSize - distance) / 3);
       } else {
@@ -128,11 +156,19 @@ export default class GraphCanvas extends React.Component {
 
   clickTrigger(pos) {
     const { circles } = this.state;
-    const clickedCircle = circles.find(circle => {
+    console.log(
+      `pos: ${JSON.stringify(pos)} circle: ${JSON.stringify(circles[1])}`
+    );
+    const clickedId = findKey(circles, circle => {
       const distance = getDistance(pos, circle);
-      return distance <= circle.radius ? circle : false;
+      //  console.log(`dist ${distance}`);
+      return distance <= circle.radius;
     });
-    this.setState({ dragged: clickedCircle });
+    if (clickedId) {
+      // console.log(`clicked${clickedId}`);
+
+      this.setState({ dragged: circles[clickedId] });
+    }
   }
 
   render() {
