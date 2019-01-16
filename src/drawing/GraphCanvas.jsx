@@ -2,21 +2,23 @@ import React from 'react';
 import findKey from 'lodash/findKey';
 import Canvas from './Canvas';
 import { createCircles, arrangeLine, resize } from './controllers/circles';
-import { interact, getDistance } from './controllers/interaction';
+import { createArrows, connectArrows } from './controllers/arrows';
+import { interact, getDistance, applyDrag } from './controllers/interaction';
 
 export default class GraphCanvas extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { circles: props.nodes, dragged: false };
+    this.state = { circles: null, arrows: null, dragged: false };
     this.update = this.update.bind(this);
     this.saveContext = this.saveContext.bind(this);
     this.draw = this.draw.bind(this);
     this.moveEvent = this.moveEvent.bind(this);
     this.clickTrigger = this.clickTrigger.bind(this);
+    this.scaleFigures = this.scaleFigures.bind(this);
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.update);
+    this.ctx.canvas.addEventListener('resize', this.update);
     window.addEventListener('mousemove', e =>
       interact(this.ctx, e, this.moveEvent)
     );
@@ -26,41 +28,62 @@ export default class GraphCanvas extends React.Component {
     window.addEventListener('mouseup', e =>
       interact(this.ctx, e, () => {
         const { dragged } = this.state;
-        if (dragged) dragged.setColor('#12bbad');
+        if (dragged) dragged.setColor('default');
         this.setState({ dragged: false });
       })
     );
-    window.addEventListener('touchstart', e => {
-      const evt = e.touches[0];
-      if (evt) interact(this.ctx, evt, this.clickTrigger);
-    });
-    window.addEventListener('touchmove', e => {
-      const evt = e.touches[0];
-      if (evt) interact(this.ctx, evt, this.moveEvent);
-    });
-    window.addEventListener('touchend', e => {
-      const evt = e.touches;
-      console.log(`end${JSON.stringify(e.touches)}`);
-      if (evt)
-        interact(this.ctx, evt, () => {
-          const { dragged } = this.state;
-          if (dragged) dragged.setColor('#12bbad');
-          this.setState({ dragged: false });
-        });
-    });
+    this.ctx.canvas.addEventListener(
+      'touchstart',
+      e => {
+        const evt = e.touches[0];
+        if (evt) interact(this.ctx, evt, this.clickTrigger);
+      },
+      false
+    );
+    this.ctx.canvas.addEventListener(
+      'touchmove',
+      e => {
+        const evt = e.touches[0];
+        const { dragged } = this.state;
+        if (dragged) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        if (evt) {
+          interact(this.ctx, evt, this.moveEvent);
+        }
+      },
+      false
+    );
+    this.ctx.canvas.addEventListener(
+      'touchend',
+      e => {
+        const evt = e.touches;
+        const { dragged } = this.state;
+        if (evt)
+          interact(this.ctx, evt, () => {
+            if (dragged) {
+              dragged.setColor('default');
+            }
+            this.setState({ dragged: false });
+          });
+      },
+      false
+    );
     const { nodes } = this.props;
     const circles = createCircles(this.ctx, nodes);
-    this.scaleCircles(circles);
+    const arrows = createArrows(this.ctx, nodes);
+    this.scaleFigures(circles, arrows);
+    //console.log(`arrows: ${JSON.stringify(arrows)}`);
   }
 
   componentWillReceiveProps(newProps) {
     const circles = createCircles(this.ctx, newProps.nodes);
-    this.scaleCircles(circles);
+    const arrows = createArrows(this.ctx, newProps.nodes);
+    this.scaleFigures(circles, arrows);
   }
 
   componentDidUpdate() {
-    //  get from state or props and draw
-    // console.log(this.ctx);
     this.setupCanvas();
     this.draw(this.ctx);
   }
@@ -91,53 +114,48 @@ export default class GraphCanvas extends React.Component {
   }
 
   update() {
-    const { circles } = this.state;
-    this.scaleCircles(circles);
-    this.draw(this.ctx);
+    const { circles, arrows } = this.state;
+    this.scaleFigures(circles, arrows);
   }
 
-  scaleCircles(circles) {
+  scaleFigures(circles, arrows) {
     resize(this.ctx, circles);
+    //   console.log(`arrows: ${JSON.stringify(arrows)}`);
     const newCircles = arrangeLine(this.ctx, circles);
-    this.setState({ circles: newCircles });
+    const newArrows = connectArrows(this.ctx, arrows, newCircles);
+    this.setState({ circles: newCircles, arrows: newArrows });
   }
 
   draw(ctx) {
-    const { circles } = this.state;
+    const { circles, arrows } = this.state;
+    //  console.log(arrows);
     ctx.save();
     ctx.beginPath();
     ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    const arrowIdS = Object.keys(arrows);
+    arrowIdS.forEach(nodeId => {
+      const nodeArrows = arrows[nodeId];
+      nodeArrows.forEach(arrow => {
+        arrow.draw(ctx);
+      });
+    });
     const idS = Object.keys(circles);
     idS.forEach(id => {
       const circle = circles[id];
       ctx.beginPath();
       circle.draw(ctx);
     });
+
     ctx.restore();
   }
 
   moveEvent(pos) {
-    const { circles, dragged } = this.state;
-    // consolconsole.log(`circles ${circles} dragged ${JSON.stringify(dragged)}`);
-    const { width, height } = this.ctx.canvas;
+    const { circles, arrows, dragged } = this.state;
     if (dragged) {
-      if (pos.x + dragged.radius > width) {
-        dragged.setX(width - dragged.radius);
-      } else if (pos.x - dragged.radius < 0) {
-        dragged.setX(0 + dragged.radius);
-      } else {
-        dragged.setX(pos.x);
-      }
-      if (pos.y + dragged.radius > height) {
-        dragged.setY(height - dragged.radius);
-      } else if (pos.y - dragged.radius < 0) {
-        dragged.setY(0 + dragged.radius);
-      } else {
-        dragged.setY(pos.y);
-      }
-      dragged.setColor('#0D8C82');
+      applyDrag(this.ctx, pos, dragged);
       circles[dragged.id] = dragged;
-      this.setState({ circles });
+      const newArrows = connectArrows(this.ctx, arrows, circles);
+      this.setState({ circles, arrows: newArrows });
       return;
     }
     const idS = Object.keys(circles);
@@ -151,22 +169,18 @@ export default class GraphCanvas extends React.Component {
         circle.setSize(scaledSize);
       }
     });
-    this.setState({ circles });
+    const newArrows = connectArrows(this.ctx, arrows, circles);
+    this.setState({ circles, arrows: newArrows });
   }
 
   clickTrigger(pos) {
     const { circles } = this.state;
-    console.log(
-      `pos: ${JSON.stringify(pos)} circle: ${JSON.stringify(circles[1])}`
-    );
+
     const clickedId = findKey(circles, circle => {
       const distance = getDistance(pos, circle);
-      //  console.log(`dist ${distance}`);
       return distance <= circle.radius;
     });
     if (clickedId) {
-      // console.log(`clicked${clickedId}`);
-
       this.setState({ dragged: circles[clickedId] });
     }
   }

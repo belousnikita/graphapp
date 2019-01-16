@@ -5,9 +5,10 @@ const createCircles = (ctx, nodes) => {
   return nodesId.reduce((acc, i) => {
     const node = nodes[i];
     const { id } = node;
-    const circle = new Circle(0, 0, 0, 0, 0, id);
+    const circle = new Circle(0, 0, 0, id);
     const size = circle.getScaledSize(ctx, nodesId.length);
     circle.setSize(size);
+    circle.setWeight(node.connectsTo.length);
     return { ...acc, [id]: circle };
   }, {});
 };
@@ -27,17 +28,21 @@ const arrangeLine = (ctx, circles) => {
   const style = getComputedStyle(ctx.canvas);
   const canvasWidth = parseInt(style.getPropertyValue('width'), 10);
   const canvasHeight = parseInt(style.getPropertyValue('height'), 10);
+
   const idS = Object.keys(circles);
-  const detla = radius * 2.5;
+  const k = 2.5;
+  const detla = radius * k;
   const length = idS.length * detla - detla;
   const center = canvasWidth / 2;
   const begin = center - length / 2;
+
   let prev = begin;
   return idS.reduce((acc, id) => {
     const circle = circles[id];
+    const shift = circle.id % 2 === 0 ? canvasHeight / 3 : -canvasHeight / 3;
     circle.setX(prev);
-    circle.setY(canvasHeight / 2);
-    prev = circle.x + circle.radius * 2.5;
+    circle.setY(canvasHeight / 2 + shift);
+    prev = circle.x + circle.radius * k;
     return { ...acc, [id]: circle };
   }, {});
 };

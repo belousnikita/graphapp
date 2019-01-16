@@ -9,7 +9,23 @@ import GraphCanvas from './drawing/GraphCanvas';
 import './style/App.css';
 
 // eslint-disable-next-line react/prefer-stateless-function
-const MAX_FIELD = 9;
+var w = window,
+  d = document,
+  e = d.documentElement,
+  g = d.getElementsByTagName('body')[0],
+  x = w.innerWidth || e.clientWidth || g.clientWidth;
+
+let MAX_FIELD = 1;
+if (x <= 320) {
+  MAX_FIELD = 6;
+} else if (x <= 375) {
+  MAX_FIELD = 7;
+} else if (x <= 425) {
+  MAX_FIELD = 8;
+} else if (x <= 768) {
+  MAX_FIELD = 15;
+} else MAX_FIELD = 18;
+
 const MIN_FIELD = 1;
 const Buttons = props => (
   <div className="btn-group text-center">

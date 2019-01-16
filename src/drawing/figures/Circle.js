@@ -1,13 +1,22 @@
 /* eslint-disable no-param-reassign */
 export default class Circle {
-  constructor(x, y, dx, dy, radius, id, color = '#12bbad') {
+  constructor(
+    x,
+    y,
+    radius,
+    id,
+    color = '#12bbad',
+    defaultColor = '#12bbad',
+    dragColor = '#0D8C82'
+  ) {
     this.x = x;
     this.y = y;
-    this.dx = dx;
-    this.dy = dy;
     this.radius = radius;
     this.id = id;
     this.color = color;
+    this.defaultColor = defaultColor;
+    this.dragColor = dragColor;
+    this.weight = 0;
   }
 
   draw = ctx => {
@@ -39,14 +48,29 @@ export default class Circle {
   };
 
   setColor = color => {
-    this.color = color;
+    switch (color) {
+      case 'default': {
+        this.color = this.defaultColor;
+        break;
+      }
+      case 'dragged': {
+        this.color = this.dragColor;
+        break;
+      }
+      default: {
+        this.color = color;
+      }
+    }
   };
 
   getScaledSize(ctx, totalCount) {
     const style = getComputedStyle(ctx.canvas);
     const canvasWidth = parseInt(style.getPropertyValue('width'), 10);
-    const size = canvasWidth / (totalCount * Math.PI * 1.5);
+    const size = canvasWidth / (totalCount * Math.PI * 0.8);
     const fixedSize = size < 16 ? 16 : size;
     return fixedSize > 40 ? 40 : fixedSize;
   }
+  setWeight = weight => {
+    this.weight = weight;
+  };
 }
