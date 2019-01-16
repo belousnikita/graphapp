@@ -6,9 +6,9 @@ This is a simple single page app fro drawing Markov Chain graphs from graph matr
 
 ### Demo
 
-[https://belousnikita.github.io/graphapp](Open app.)
+Open app [https://belousnikita.github.io/graphapp](https://belousnikita.github.io/graphapp).
 
-### `Installation`
+### Installation
 
 To install run `npm install` then run `npm start`.
 
