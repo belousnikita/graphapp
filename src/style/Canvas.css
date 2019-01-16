@@ -1,11 +1,9 @@
 canvas {
-  background-color: #0b756c;
-  -moz-box-shadow: 1px 1px 3px 2px #0b756c;
-  -webkit-box-shadow: 1px 1px 3px 2px #0b756c;
-  box-shadow: 1px 1px 3px 2px #0b756c;
+  background-color: #009999;
+  -moz-box-shadow: 1px 1px 3px 2px #006363;
+  -webkit-box-shadow: 1px 1px 3px 2px #1d7373;
+  box-shadow: 1px 1px 3px 2px #1d7373;
   text-align: center;
   margin: 0;
   width: 100%;
-  height: 100%;
 }
-/* //touch-action: none; */

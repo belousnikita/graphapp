@@ -3,7 +3,7 @@ export default class Arrow {
     fromNodeId,
     toNodeId,
     id,
-    color = '#12bbad',
+    color = '#0C0874',
     arrowHeadRadius = 14
   ) {
     this.fromNodeId = String(fromNodeId);

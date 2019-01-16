@@ -12,7 +12,7 @@ export default class Canvas extends React.Component {
 
     return (
       <canvas
-        style={{ width: '100%', height: '400px' }}
+        style={{ width: '100%', height: '500px' }}
         ref={node => (node ? contextRef(node.getContext('2d')) : null)}
       />
     );

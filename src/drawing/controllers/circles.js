@@ -8,7 +8,6 @@ const createCircles = (ctx, nodes) => {
     const circle = new Circle(0, 0, 0, id);
     const size = circle.getScaledSize(ctx, nodesId.length);
     circle.setSize(size);
-    circle.setWeight(node.connectsTo.length);
     return { ...acc, [id]: circle };
   }, {});
 };

@@ -163,8 +163,8 @@ export default class GraphCanvas extends React.Component {
       const circle = circles[id];
       const distance = getDistance(pos, circle);
       const scaledSize = circle.getScaledSize(this.ctx, idS.length);
-      if (distance <= circle.radius) {
-        circle.setSize(scaledSize + (scaledSize - distance) / 3);
+      if (distance <= circle.radius * 4) {
+        circle.setSize(scaledSize + (scaledSize - distance / 4) / 3);
       } else {
         circle.setSize(scaledSize);
       }

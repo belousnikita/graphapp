@@ -5,9 +5,9 @@ export default class Circle {
     y,
     radius,
     id,
-    color = '#12bbad',
-    defaultColor = '#12bbad',
-    dragColor = '#0D8C82'
+    color = '#06266F',
+    defaultColor = '#06266F',
+    dragColor = '#2A4480'
   ) {
     this.x = x;
     this.y = y;
@@ -16,7 +16,6 @@ export default class Circle {
     this.color = color;
     this.defaultColor = defaultColor;
     this.dragColor = dragColor;
-    this.weight = 0;
   }
 
   draw = ctx => {
@@ -70,7 +69,4 @@ export default class Circle {
     const fixedSize = size < 16 ? 16 : size;
     return fixedSize > 40 ? 40 : fixedSize;
   }
-  setWeight = weight => {
-    this.weight = weight;
-  };
 }

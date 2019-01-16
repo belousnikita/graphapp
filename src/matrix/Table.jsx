@@ -3,16 +3,10 @@
 import React from 'react';
 import { uniqueId } from 'lodash';
 import classNames from 'classnames';
-import './style/Table.css';
+import '../style/Table.css';
 
 const Head = ({ children }) => (
-  <td
-    className="p-1"
-    align="center"
-    valign="center"
-    width="2.8125rem"
-    height="2.8125rem"
-  >
+  <td className="p-1" align="center" valign="center">
     {children}
   </td>
 );
@@ -21,13 +15,7 @@ const ButtonCell = props => {
   const { className, onClick } = props;
   const name = className.split(' ').join('-'); // TODO Fix classnames
   return (
-    <td
-      className="p-1"
-      width="2.8125rem"
-      height="2.8125rem"
-      align="center"
-      valign="center"
-    >
+    <td className="p-1" align="center" valign="center">
       {<button className={name} type="button" onClick={onClick} />}
     </td>
   );

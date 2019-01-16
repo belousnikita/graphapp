@@ -14,7 +14,12 @@
   border-radius: 0.1rem;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-
+.p-1 {
+  align: 'center';
+  valign: 'center';
+  width: '2.8125rem';
+  height: '2.8125rem';
+}
 .btn-cell:hover {
   background-color: #12bbad;
   border-color: #12bbad;

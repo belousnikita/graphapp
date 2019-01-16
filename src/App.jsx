@@ -3,8 +3,8 @@
 /* eslint-disable react/no-access-state-in-setstate */
 /* eslint-disable react/prop-types */
 import React from 'react';
-import Table from './Table';
-import GraphMatrix from './GraphMatrix';
+import Table from './matrix/Table';
+import GraphMatrix from './matrix/GraphMatrix';
 import GraphCanvas from './drawing/GraphCanvas';
 import './style/App.css';
 
@@ -32,18 +32,18 @@ const Buttons = props => (
     <button
       type="button"
       className="btn btn-primary shadow-sm"
-      does="add"
-      onClick={props.onClick}
-    >
-      + Node
-    </button>
-    <button
-      type="button"
-      className="btn btn-primary shadow-sm"
       does="dec"
       onClick={props.onClick}
     >
       - Node
+    </button>
+    <button
+      type="button"
+      className="btn btn-primary shadow-sm"
+      does="add"
+      onClick={props.onClick}
+    >
+      + Node
     </button>
   </div>
 );
