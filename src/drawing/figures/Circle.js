@@ -5,9 +5,9 @@ export default class Circle {
     y,
     radius,
     id,
-    color = '#06266F',
-    defaultColor = '#06266F',
-    dragColor = '#2A4480'
+    color = '#006494',
+    defaultColor = '#006494',
+    dragColor = '#5DD9C1'
   ) {
     this.x = x;
     this.y = y;

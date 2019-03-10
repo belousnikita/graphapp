@@ -3,7 +3,7 @@ export default class Arrow {
     fromNodeId,
     toNodeId,
     id,
-    color = '#0C0874',
+    color = '#006494',
     arrowHeadRadius = 14
   ) {
     this.fromNodeId = String(fromNodeId);
@@ -93,14 +93,14 @@ export default class Arrow {
       xShift > quartRadius
         ? halfRadius
         : xShift < -quartRadius
-        ? -halfRadius
-        : xShift;
+          ? -halfRadius
+          : xShift;
     yShift =
       yShift > quartRadius
         ? halfRadius
         : yShift < -quartRadius
-        ? -halfRadius
-        : yShift;
+          ? -halfRadius
+          : yShift;
 
     ctx.save();
     ctx.beginPath();
