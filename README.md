@@ -4,5 +4,5 @@ This is a simple single page app for drawing Markov Chain graphs from graph matr
 
 ### Demo
 
-Open app [https://chern0us.github.io/graphapp](https://chern0us.github.io/graphapp).
+Open app [https://belousnikita.github.io/graphapp](https://belousnikita.github.io/graphapp).
 
